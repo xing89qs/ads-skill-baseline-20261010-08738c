@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>B0HHDR4K26 | 原始广告调整运行基线</title>
+  <style>
+    :root { color-scheme: light; --ink:#20282d; --muted:#5b666c; --line:#dce3e5; --green:#207958; --cyan:#177587; --red:#aa424f; --purple:#79566b; --neutral:#737d83; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:#fff; color:var(--ink); font:14px/1.65 system-ui,-apple-system,"Segoe UI","Noto Sans CJK SC",sans-serif; letter-spacing:0; }
+    main { max-width:1180px; margin:auto; padding:28px 28px 50px; }
+    header { display:flex; justify-content:space-between; align-items:flex-start; gap:18px; border-bottom:1px solid var(--line); padding-bottom:20px; }
+    h1 { font-size:26px; line-height:1.35; margin:5px 0 8px; font-weight:650; }
+    h2 { font-size:18px; margin:0 0 12px; font-weight:650; }
+    h3 { font-size:15px; margin:0 0 7px; }
+    p { margin:8px 0; }
+    .eyebrow { color:var(--muted); font-size:12px; }
+    .muted { color:var(--muted); }
+    .mono,code { font-family:ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    button { font:inherit; padding:7px 12px; border:1px solid var(--line); border-radius:4px; background:#fff; color:var(--ink); white-space:nowrap; cursor:pointer; }
+    button:hover { background:#f1f5f5; }
+    a { color:var(--cyan); text-underline-offset:3px; overflow-wrap:anywhere; }
+    section { padding:24px 0; border-bottom:1px solid var(--line); }
+    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:16px; padding:22px 0 8px; }
+    .stat { padding-left:13px; border-left:3px solid var(--line); min-width:0; }
+    .stat:first-child { border-color:var(--cyan); }
+    .stat:nth-child(3) { border-color:var(--red); }
+    .value { font-size:25px; font-weight:650; font-variant-numeric:tabular-nums; margin:4px 0; }
+    .status { color:var(--green); }
+    .warning { color:var(--red); }
+    .summary-line { background:#f3f7f6; padding:12px 16px; border-left:3px solid var(--green); }
+    .allocation { display:flex; height:25px; width:100%; margin:14px 0; background:#f1f3f3; overflow:hidden; }
+    .allocation span { height:100%; min-width:1px; }
+    .legend { display:flex; flex-wrap:wrap; gap:9px 20px; font-size:12px; }
+    .swatch { display:inline-block; width:10px; height:10px; margin-right:6px; }
+    .stage { display:grid; grid-template-columns:255px minmax(0,1fr) 95px; align-items:center; gap:15px; padding:10px 0; border-bottom:1px solid #edf0f1; }
+    .stage-name { font-weight:550; }
+    .stage-time { text-align:right; font-variant-numeric:tabular-nums; }
+    .track { height:12px; background:#eef1f2; }
+    .mark { height:100%; min-width:2px; }
+    .stage details { grid-column:1/-1; font-size:12px; color:var(--muted); }
+    summary { cursor:pointer; overflow-wrap:anywhere; }
+    .table-scroll { overflow-x:auto; }
+    table { border-collapse:collapse; width:100%; text-align:left; }
+    th { font-size:12px; font-weight:600; color:var(--muted); background:#f5f7f7; }
+    td,th { padding:10px 12px; border-bottom:1px solid var(--line); vertical-align:top; }
+    td.number { font-variant-numeric:tabular-nums; white-space:nowrap; }
+    .campaign { overflow-wrap:anywhere; min-width:145px; max-width:360px; }
+    .flow { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin:15px 0; }
+    .flow-node { border-top:3px solid var(--line); padding:12px 0; min-width:0; }
+    .flow-node:nth-child(2) { border-color:var(--cyan); }
+    .flow-node:nth-child(3) { border-color:var(--purple); }
+    .flow-node:nth-child(4) { border-color:var(--green); }
+    ul,ol { padding-left:22px; }
+    li { margin:7px 0; }
+    .columns { display:grid; grid-template-columns:1fr 1fr; gap:28px; }
+    details.block { padding:14px 0; }
+    .hashes td { font:12px/1.7 ui-monospace,SFMono-Regular,Consolas,monospace; overflow-wrap:anywhere; }
+    footer { padding-top:20px; font-size:12px; color:var(--muted); overflow-wrap:anywhere; }
+    @media(max-width:700px) {
+      main { padding:20px 16px 35px; }
+      header { flex-direction:column; }
+      h1 { font-size:22px; }
+      .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .stage { grid-template-columns:minmax(0,1fr) 90px; gap:7px; }
+      .stage .track { grid-column:1/-1; grid-row:auto; }
+      .stage-time { grid-column:2; grid-row:auto; }
+      .flow { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .columns { grid-template-columns:1fr; gap:12px; }
+    }
+    @media print {
+      main { max-width:none; padding:0; }
+      button { display:none; }
+      .table-scroll { overflow:visible; }
+      td,th { padding:6px; }
+      .stage, .flow-node { break-inside:avoid; }
+      details:not([open]) { display:none; }
+      body { font-size:11px; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div>
+      <div class="eyebrow">ORIGINAL RUN / BEFORE OPTIMIZATION / 2026-10-10</div>
+      <h1>B0HHDR4K26 · 原始运行基线</h1>
+      <div class="muted">广告调整 pipeline，从用户请求到 CP-1 审批摘要。仅记录原始 run，不修改 skill 或广告。</div>
+      <div id="period" class="mono muted"></div>
+    </div>
+    <button type="button" id="print">打印 / PDF</button>
+  </header>
+  <div class="stats">
+    <div class="stat"><div class="muted">全流程墙钟时间</div><div class="value" id="elapsed"></div><div class="muted" id="local-time"></div></div>
+    <div class="stat"><div class="muted">A/A2 实际采集与校验</div><div class="value" id="capture"></div><div class="muted" id="capture-share"></div></div>
+    <div class="stat"><div class="muted">决策 gate 尝试次数</div><div class="value" id="attempts"></div><div class="status">第三轮通过；报告通过</div></div>
+    <div class="stat"><div class="muted">前台执行动作</div><div class="value">6 条</div><div class="muted">medium / planned / 尚未执行</div></div>
+  </div>
+  <section>
+    <h2>01 / 本次结果</h2>
+    <p class="summary-line"><strong>这是运行质量和速度的基线，不是广告优化效果验证。</strong> 33 单、26.31% ACoS 是动作前的窗口数据；六条建议没有执行，因此不存在可据此声称的增量利润或 ACoS 改善。</p>
+    <div class="columns">
+      <div><h3>业务输入与范围</h3><ul id="facts"></ul></div>
+      <div><h3>交付与完成边界</h3><ul id="deliverables"></ul></div>
+    </div>
+  </section>
+  <section>
+    <h2>02 / 实际流程与每步耗时</h2>
+    <p class="muted">事件边界连续、互不重叠；含模型生成、工具往返、准备与交接，不等同于 CPU 或网络执行时间。图内时间均为北京时间。</p>
+    <div class="allocation" id="allocation" role="img" aria-label="按阶段类别分配的实际耗时"></div>
+    <div class="legend" id="legend"></div>
+    <div id="stages"></div>
+    <p class="muted" id="write-cost"></p>
+    <details class="block"><summary>测量方法与时间戳</summary><p>总耗时来自原始 task_complete.duration_ms。采集时间取 runner 的 started_at / finished_at；交接取 spawn_agent 时间；动作提交取工具调用和返回；三次 gate 取 exec_command 调用与返回；机械边界取 scaffold 完成标记。</p><p>“候选补判”和“校验修复”是日志事件区间，不声称其中每秒都用于业务推理。“交接空档”也不能仅凭相邻时间归因于大输出或调度。</p></details>
+  </section>
+  <section>
+    <h2>03 / 六条原始动作</h2>
+    <p class="muted">只调整竞价；不改预算、Placement、状态，不执行否词。原始值作为比较基线，不作为优化版评估 agent 的预期答案输入。</p>
+    <div class="table-scroll"><table><thead><tr><th>ID</th><th>Campaign / 对象</th><th>匹配 / 类型</th><th>原竞价 → 建议</th><th>风险 / 状态</th></tr></thead><tbody id="actions"></tbody></table></div>
+    <details class="block"><summary>原始理由与观察边界</summary><div id="rationales"></div></details>
+  </section>
+  <section>
+    <h2>04 / 返工与已知缺陷</h2>
+    <div class="table-scroll"><table><thead><tr><th>尝试</th><th>时间</th><th>校验命令往返</th><th>结果</th><th>修复内容</th></tr></thead><tbody id="gates"></tbody></table></div>
+    <p class="muted">耗时主要发生在两次失败之间的记录修复，校验命令自身只是数秒。报告的最终 PASS 不代表全量 envelope / disposition / 每项业务判断均被独立认证。</p>
+    <ul id="limitations"></ul>
+  </section>
+  <section>
+    <h2>05 / Jev 接入适配判断</h2>
+    <p><strong>可接入有限集合的判断层，不宜直接替换整个 skill。</strong> 官方 TypeSafe skill 是 API 使用说明；安装它不等于自动改造 pipeline。Jev 不生成代码、报告或自由文本，也不可靠地承担精确数值运算。</p>
+    <div class="flow" aria-label="建议的决策层接入流程">
+      <div class="flow-node"><h3>1. 冻结事实 + 代码</h3><div>按窗口聚合、去重、scope、样本指标与硬约束预筛。</div></div>
+      <div class="flow-node"><h3>2. Jev 语义判断</h3><div>相关性、意图、证据是否支持某个有限处置；返回 Choice / Score / Noul。</div></div>
+      <div class="flow-node"><h3>3. Phase B 决策 owner</h3><div>不确定项交回 LLM；确定数值由既有规则 / 决策流程处理；生成理由。</div></div>
+      <div class="flow-node"><h3>4. 原写入与审批</h3><div>保留 write_validated_json、validators、sole A* writer、CP-1 / CP-Risk。</div></div>
+    </div>
+    <div class="columns">
+      <div><h3>适合先实验</h3><ul>
+        <li>在产品描述与小范围事实下，批量判断搜索词相关性和意图。</li>
+        <li>在代码计算的 allowed_dispositions 中选择候选处置；不确定则交回 LLM / operator。</li>
+        <li>独立判断对象是否需要诊断、主要缺口是什么；保留可追溯 evidence refs。</li>
+        <li>批量回答多个小问题，再由代码组合；不要把整本 skill 和全部 296 条候选塞进单一巨型 state。</li>
+      </ul></div>
+      <div><h3>不交给 Jev</h3><ul>
+        <li>ACoS / CPC / 时间窗计算、去重、计数、预算上限、numeric ID 和 schema 校验。</li>
+        <li>从概率或 score 内插出精确竞价；数值 sizing 仍需明确的业务依据。</li>
+        <li>替代复杂跨控制面的因果判断、回撤、高风险核心词确认。</li>
+        <li>直接写 A*、批准或执行广告；仅凭模型概率生成正式否词。</li>
+      </ul></div>
+    </div>
+    <p class="warning">尚未安装 TypeSafe skill、调用 Jev 或验证广告领域质量。没有测得提速倍数。外发运营数据前需确认 API 凭据、数据范围与授权；密钥不入库。</p>
+    <ul id="typesafe-sources"></ul>
+  </section>
+  <section>
+    <h2>06 / 优化后对照协议</h2>
+    <div class="table-scroll"><table><thead><tr><th>维度</th><th>原始基线</th><th>优化后</th></tr></thead><tbody id="comparison"></tbody></table></div>
+    <ol>
+      <li><strong>决策回放：</strong>用完全相同的冻结 A/A2、目标和约束，开隔离的新 bundle。对照数据哈希；不要让评估 agent 看六条基线答案。</li>
+      <li><strong>端到端重跑：</strong>单独测量 fresh pipeline；注明 API 缓存、模型版本、窗口和数据变化，不能把只跑 B 的耗时拿来和完整原始 run 比。</li>
+      <li><strong>质量不退化：</strong>保留对象 / action-family 覆盖、真实 ID、证据时间窗、高风险规则、审批 gates；独立判断动作是否合理，不以“与六条答案完全一致”为唯一正确标准。</li>
+      <li><strong>观察语义：</strong>更多候选 / 更少动作本身不代表更好；检查保留对象是否有证据、是否漏掉 wanted-active / 高花费控制义务。</li>
+      <li><strong>Jev 单独评测：</strong>记录 API 延迟、费用、question/model 版本、失败与低置信度 fallback、选项顺序稳定性；保留稀有和高风险边界案例。</li>
+      <li><strong>版本覆盖：</strong>通用行为改 base，让 Codex / Luckee 消费一致；仅多 agent 差异改 overlay；改 shared/scripts 同步 pytest，不靠跳过 validator 提速。</li>
+    </ol>
+  </section>
+  <section>
+    <h2>07 / 来源与版本指纹</h2>
+    <p id="version" class="mono"></p>
+    <p class="muted">文件 SHA-256 在原始 run 完成后、优化前记录。Git HEAD 是实现基线；tracked skill / scripts 未修改。运行产物为当时未提交文件，不把它们误称为 Git 已冻结内容。</p>
+    <div id="refs" class="mono"></div>
+    <details class="block"><summary id="hash-label">实现与产物 SHA-256</summary><div class="table-scroll"><table class="hashes"><thead><tr><th>类型 / 路径</th><th>SHA-256</th></tr></thead><tbody id="hashes"></tbody></table></div></details>
+    <p><a href="baseline.json">机器可读基线 baseline.json</a></p>
+  </section>
+  <footer id="footer"></footer>
+</main>
+<script type="application/json" id="baseline-data">{
+  "schema_version": "1.0",
+  "kind": "original_run_baseline",
+  "evaluation_id": "original-2026-10-10",
+  "captured_at": "2026-10-10T04:04:22.197Z",
+  "timezone": "Asia/Shanghai",
+  "product": "B0HHDR4K26",
+  "diag_id": "diag-2026-10-10-08738c",
+  "original_bundle": "products/B0HHDR4K26/ads/bundles/b-261010-08738c",
+  "git_head": "9c4c0e755faf2b1423671f03d2df17ef04b936e6",
+  "run_start": "2026-10-10T03:20:01.119Z",
+  "run_end": "2026-10-10T03:51:28.840Z",
+  "elapsed_ms": 1887721,
+  "stages": [
+    {
+      "index": 1,
+      "label": "预检与工具确认",
+      "detail": "读取产品、目标、skill 和协议；实测 write_validated_json。",
+      "category": "setup",
+      "start": "2026-10-10T03:20:01.119Z",
+      "end": "2026-10-10T03:21:12.692Z",
+      "duration_ms": 71573
+    },
+    {
+      "index": 2,
+      "label": "快照 agent 准备",
+      "detail": "读取采集协议、启动 mandatory runner。",
+      "category": "setup",
+      "start": "2026-10-10T03:21:12.692Z",
+      "end": "2026-10-10T03:21:46.391996+00:00",
+      "duration_ms": 33699
+    },
+    {
+      "index": 3,
+      "label": "数据与上下文采集",
+      "detail": "HTTP MCP smoke、广告四类、价格和销售；冻结 A/A2 并校验。",
+      "category": "data",
+      "start": "2026-10-10T03:21:46.391996+00:00",
+      "end": "2026-10-10T03:22:17.891033+00:00",
+      "duration_ms": 31500
+    },
+    {
+      "index": 4,
+      "label": "快照收尾与机械初始化",
+      "detail": "返回快照摘要；创建账本、候选队列和 sibling handoffs。",
+      "category": "setup",
+      "start": "2026-10-10T03:22:17.891033+00:00",
+      "end": "2026-10-10T03:22:44.005380Z",
+      "duration_ms": 26114
+    },
+    {
+      "index": 5,
+      "label": "机械完成后的交接空档",
+      "detail": "scaffold 已完成，到决策 agent 派发之间的墙钟间隔；不能等同于 API 耗时。",
+      "category": "handoff",
+      "start": "2026-10-10T03:22:44.005380Z",
+      "end": "2026-10-10T03:27:42.952Z",
+      "duration_ms": 298947
+    },
+    {
+      "index": 6,
+      "label": "读取、聚合与选动作",
+      "detail": "复核 7 天证据粒度、保留转化赢家、选择六个出价控制对象。",
+      "category": "decision",
+      "start": "2026-10-10T03:27:42.952Z",
+      "end": "2026-10-10T03:31:07.830Z",
+      "duration_ms": 204878
+    },
+    {
+      "index": 7,
+      "label": "生成并提交六条动作",
+      "detail": "编写理由和实验边界，逐条通过 write_validated_json 创建 planned 动作。",
+      "category": "decision",
+      "start": "2026-10-10T03:31:07.830Z",
+      "end": "2026-10-10T03:32:49.431Z",
+      "duration_ms": 101601
+    },
+    {
+      "index": 8,
+      "label": "候选补判与首次校验准备",
+      "detail": "补写赢家、低曝光、诊断等候选的明确处置；否词单独延期。",
+      "category": "decision",
+      "start": "2026-10-10T03:32:49.431Z",
+      "end": "2026-10-10T03:37:41.875Z",
+      "duration_ms": 292444
+    },
+    {
+      "index": 9,
+      "label": "三次校验及其间修复",
+      "detail": "模板说明和七条遗漏触发首轮失败；恢复后队列未同步触发第二轮失败；第三轮通过。",
+      "category": "repair",
+      "start": "2026-10-10T03:37:41.875Z",
+      "end": "2026-10-10T03:43:42.404Z",
+      "duration_ms": 360529
+    },
+    {
+      "index": 10,
+      "label": "报告阶段交接",
+      "detail": "决策完成摘要与 Phase C 派发。",
+      "category": "handoff",
+      "start": "2026-10-10T03:43:42.404Z",
+      "end": "2026-10-10T03:44:20.624Z",
+      "duration_ms": 38220
+    },
+    {
+      "index": 11,
+      "label": "报告生成与校验",
+      "detail": "补齐名称、指标、诊断、路由证据；13 个 header 和报告 gate 通过。",
+      "category": "report",
+      "start": "2026-10-10T03:44:20.624Z",
+      "end": "2026-10-10T03:51:08.043Z",
+      "duration_ms": 407419
+    },
+    {
+      "index": 12,
+      "label": "审批摘要与收尾",
+      "detail": "生成 CP-1；同步 helper 无有效后台同步；保持本地 planned。",
+      "category": "setup",
+      "start": "2026-10-10T03:51:08.043Z",
+      "end": "2026-10-10T03:51:28.840Z",
+      "duration_ms": 20797
+    }
+  ],
+  "stage_category_ms": {
+    "setup": 152183,
+    "data": 31500,
+    "handoff": 337167,
+    "decision": 598923,
+    "repair": 360529,
+    "report": 407419
+  },
+  "actual_phase_a_ms": 31500,
+  "actual_action_tool_seconds": 1.3717000000000001,
+  "source_window": {
+    "start": "2026-10-04",
+    "end": "2026-10-10"
+  },
+  "metrics": {
+    "campaign_count_reporting": 11,
+    "campaign_count_enabled": 11,
+    "impressions": 74958,
+    "clicks": 1077,
+    "spend": 403.74,
+    "sales": 1534.34,
+    "orders": 33,
+    "acos": 26.31,
+    "cpc": 0.37,
+    "cvr": 3.06
+  },
+  "targets": {
+    "schema_version": "1.2",
+    "primary_asin": "B0HHDR4K26",
+    "period_id": "2026-10-monthly",
+    "effective_from": "2026-10-08",
+    "updated_at": "2026-10-08T09:33:54.357Z",
+    "source": "agent_proposal",
+    "monthly_orders": 100,
+    "target_acos_pct": 25,
+    "target_tacos_pct": 12,
+    "daily_budget_cap_usd": 125,
+    "status_note": "P0：利润优先；总体广告 ACoS 控制在 25% 以下，销量允许牺牲；先压缩低效流量，不以放量为优先。",
+    "assumptions": {
+      "task": "profit",
+      "maturity": "existing",
+      "stock_health": "stable",
+      "inbound": "unknown",
+      "price_positioning": "mainstream",
+      "evidence_flag": "evidence"
+    }
+  },
+  "capture_counts": {
+    "enabled_campaigns": 11,
+    "manual_campaigns": 11,
+    "keywords_returned_total": 469,
+    "search_terms_returned_total": 723,
+    "placements_returned_total": 214
+  },
+  "coverage": {
+    "execute": 6,
+    "candidate": 290,
+    "observe": 0,
+    "diagnostic": 0,
+    "hold": 33,
+    "group_hold": 0,
+    "covered": 329
+  },
+  "surface": {
+    "campaign_count": 31,
+    "surface_count": 279,
+    "execute": 10,
+    "candidate": 105,
+    "observe": 0,
+    "diagnostic": 0,
+    "hold": 164,
+    "not_applicable": 0,
+    "material": 117
+  },
+  "family": {
+    "required_pairs": 614,
+    "covered_pairs": 614,
+    "execute": 15,
+    "candidate": 544,
+    "diagnostic": 0,
+    "observe": 0,
+    "hold": 55,
+    "not_applicable": 0,
+    "family_counts": {
+      "bid": 193,
+      "budget": 22,
+      "diagnostic": 178,
+      "negative": 36,
+      "placement": 42,
+      "search_term": 115,
+      "structure": 28
+    }
+  },
+  "plan_counts": {
+    "candidates": 290,
+    "diagnostics": 46,
+    "watch": 0,
+    "budget_notes": 0
+  },
+  "posture": {
+    "type": "efficiency_repair",
+    "business_goal_fit": "Oct8 profit priority allows sacrificed volume; full-window ACoS26.31% versus25% target calls for selective control, not broad scale or suspension.",
+    "opportunity_cost": "Preserve efficient Exact, prelit and auto converters; reduce six identified costly pockets instead of suppressing entire mixed campaigns.",
+    "traffic_pollution_risk": "Broad and loose traffic contain mixed intent; formal negative candidates remain a separate decision, not executable negatives today.",
+    "core_order_loss_risk": "Six medium-risk reversible reductions preserve conversion entry. Related zero-order words receive small steps; no core pause/remove/negate, no budget/placement double change."
+  },
+  "actions": [
+    {
+      "schema_version": "1.0",
+      "action_id": "A1",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:68771525388517:target:283562961957727:targeting_expression_predefined",
+        "level": "target",
+        "campaign_id": "68771525388517",
+        "campaign_name": "XC 雪车 auto 0.35",
+        "id": "283562961957727",
+        "name": "loose-match",
+        "match_type": "targeting_expression_predefined",
+        "ad_group_id": "523868814539817"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.32
+      },
+      "after_value": {
+        "bid": 0.25
+      },
+      "delta_pct": -21.875,
+      "rationale": "自动探索流量效率修复：10月4日至10日 loose-match 合计110点击、花费$36.93、1单，ACoS 91.50%，显著高于25%目标；利润优先且允许牺牲销量，因此竞价$0.32降至$0.25，保留发现与转化入口而不暂停，D+3检查CPC与花费，D+7核对订单及ACoS，防范未来订单减少。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "CPC和无订单花费下降，保留相关搜索点击，D+7 ACoS向25%回落且订单损失可接受。",
+        "failure_signal": "曝光和订单明显下降但CPC未改善，或相关流量仍持续高成本且无新增订单；复核而不自动再次降价。",
+        "supersede_rule": "新价格、库存、预算或placement变更及更新综合决策覆盖本动作时重新归因，不自动连降。",
+        "confounders_to_watch": [
+          "归因回填",
+          "价格与优惠变化",
+          "预算历史配置与当前值差异",
+          "placement修正值缺失",
+          "旺季流量变化"
+        ],
+        "next_decision_trigger": "E+48h检查CPC与交付，D+3检查花费，D+7复核转化和回撤必要性。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "context_snapshot/business_context.json",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_087"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "preserve_conversion_access"
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "action_id": "A2",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:44209967606942:target:400907215172162:targeting_expression_predefined",
+        "level": "target",
+        "campaign_id": "44209967606942",
+        "campaign_name": "XC 雪车 auto 0.25 ping",
+        "id": "400907215172162",
+        "name": "loose-match",
+        "match_type": "targeting_expression_predefined",
+        "ad_group_id": "517385930778304"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.31
+      },
+      "after_value": {
+        "bid": 0.26
+      },
+      "delta_pct": -16.1290322581,
+      "rationale": "自动探索流量效率修复：10月4日至10日 loose-match 合计99点击、花费$30.68、1单、销售$71.99，ACoS 42.62%；相较更差的探索活动保留较温和控制，竞价$0.31降至$0.26，减少低效竞拍并保留出单入口，D+3和D+7复核CPC、花费与订单损失。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "CPC及无订单花费下降，D+7订单入口保留且ACoS向25%改善。",
+        "failure_signal": "订单明显减少但成本效率没有改善，或CPC维持原位；复核流量组成后决定回撤，不自动连续降价。",
+        "supersede_rule": "预算、placement或价格变更重叠则降低归因，新综合决策覆盖本动作时关闭原观察。",
+        "confounders_to_watch": [
+          "归因回填",
+          "placement修正值缺失",
+          "价格与优惠变化",
+          "旺季需求"
+        ],
+        "next_decision_trigger": "E+48h CPC检查，D+3花费检查，D+7效率与订单复核。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_070"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "preserve_conversion_access"
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "action_id": "A3",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:206183611307550:keyword:73782449603116:broad",
+        "level": "keyword",
+        "campaign_id": "206183611307550",
+        "campaign_name": "AI-SP-B0FP298DNM-WHT1-Phrase-Discovery-US_20260909T152000Z",
+        "id": "73782449603116",
+        "name": "small christmas tree",
+        "match_type": "BROAD",
+        "ad_group_id": "151900461698695"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.42
+      },
+      "after_value": {
+        "bid": 0.35
+      },
+      "delta_pct": -16.6666666667,
+      "rationale": "AI探索层相关但低效的宽泛词：10月4日至10日 small christmas tree 合计62点击、花费$25.14、1单，ACoS 62.87%；单日17.85%并不代表整窗赢家，因此按利润优先将竞价$0.42降至$0.35，不暂停相关词、不加预算，D+3看CPC，D+7确认效率改善与保留转化的取舍。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "无订单花费和CPC回落，相关搜索流量仍可进入，D+7 ACoS向25%改善。",
+        "failure_signal": "仅曝光和订单减少而CPC、ACoS不改善，或流量意图持续偏离；复核后回撤或另行清理，不自动否词。",
+        "supersede_rule": "其他预算、placement、listing、价格变更重叠则降低归因，下轮综合调整可覆盖本动作。",
+        "confounders_to_watch": [
+          "搜索词混合意图",
+          "当前预算与历史消耗口径差异",
+          "归因回填",
+          "价格与优惠变化"
+        ],
+        "next_decision_trigger": "E+48h与D+3核对CPC和搜索词，D+7复核订单及回撤。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "snapshot_baseline/search_terms.jsonl",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_043"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "preserve_conversion_access"
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "action_id": "A4",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:140368012401444:keyword:48916364976641:exact",
+        "level": "keyword",
+        "campaign_id": "140368012401444",
+        "campaign_name": "AI-SP-B0FP298DNM-B0DL5DJN2M-TABLETOP-TEST-US_20260919T040000Z",
+        "id": "48916364976641",
+        "name": "tabletop christmas tree with lights",
+        "match_type": "EXACT",
+        "ad_group_id": "91708241023472"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.4
+      },
+      "after_value": {
+        "bid": 0.36
+      },
+      "delta_pct": -10,
+      "rationale": "AI测试层相关精确词的温和控损：产品为$49.99的3英尺预点亮桌面圣诞树，tabletop christmas tree with lights 相关但10月4日至10日合计28点击、花费$12.62、0单；利润优先且允许牺牲销量，因此竞价$0.40降至$0.36，而不暂停或否定，样本尚不能证明永久不转化，D+7复核归因回填与潜在订单损失。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "CPC和无订单花费降低，仍保持相关点击；D+7出现订单或确认探索支出下降。",
+        "failure_signal": "成本效率没有改善且相关曝光明显减少，或归因回填表明原价已有效转化；复核回撤。",
+        "supersede_rule": "价格、listing、库存或其他广告改动重叠需重新归因，不从零订单直接升级暂停。",
+        "confounders_to_watch": [
+          "归因回填",
+          "真实CVR先验缺失",
+          "未来订单损失",
+          "库存数据缺口",
+          "价格变化"
+        ],
+        "next_decision_trigger": "E+48h与D+3看CPC和流量保留，D+7判断继续控价或回撤。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "context_snapshot/listing_context.json",
+        "products/B0HHDR4K26/PRODUCT_BRIEF.md",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_027"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "reversible_loss_control"
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "action_id": "A5",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:56658275217200:keyword:148572218234183:broad",
+        "level": "keyword",
+        "campaign_id": "56658275217200",
+        "campaign_name": "AI-SP-B0FP298DNM-MIX1-Broad-Generic-US_20260910T160000Z",
+        "id": "148572218234183",
+        "name": "small christmas tree",
+        "match_type": "BROAD",
+        "ad_group_id": "151243126725952"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.27
+      },
+      "after_value": {
+        "bid": 0.24
+      },
+      "delta_pct": -11.1111111111,
+      "rationale": "AI宽泛探索层收缩低效支出：10月4日至10日 small christmas tree 合计30点击、花费$10.24、0单，同活动 mini christmas tree 已有2单；为保留赢家并减少泛词浪费，竞价$0.27降至$0.24，不降低整个活动预算、不暂停相关词，D+7核对回填订单与成本效率。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "泛词CPC和无订单花费下降，活动赢家交付不被整体预算收缩损伤，D+7效率改善。",
+        "failure_signal": "相关曝光明显减少但CPC无改善，或归因回填出现有效订单；复核回撤，不自动否词。",
+        "supersede_rule": "下轮综合调整或价格、预算、placement变更覆盖本动作则重评归因。",
+        "confounders_to_watch": [
+          "归因回填",
+          "宽泛词意图混杂",
+          "未来订单损失",
+          "预算配置历史口径",
+          "旺季需求"
+        ],
+        "next_decision_trigger": "E+48h CPC检查，D+3浪费花费检查，D+7转化和订单损失复核。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_083"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "preserve_sibling_winners"
+      ]
+    },
+    {
+      "schema_version": "1.0",
+      "action_id": "A6",
+      "diag_id": "diag-2026-10-10-08738c",
+      "generated_at": "2026-10-10T03:29:36Z",
+      "object": {
+        "object_key": "keyword_target:56658275217200:keyword:237939335129822:broad",
+        "level": "keyword",
+        "campaign_id": "56658275217200",
+        "campaign_name": "AI-SP-B0FP298DNM-MIX1-Broad-Generic-US_20260910T160000Z",
+        "id": "237939335129822",
+        "name": "pre lit christmas tree",
+        "match_type": "BROAD",
+        "ad_group_id": "151243126725952"
+      },
+      "action_type": "bid_change",
+      "action_subtype": "standard",
+      "before_value": {
+        "bid": 0.27
+      },
+      "after_value": {
+        "bid": 0.25
+      },
+      "delta_pct": -7.4074074074,
+      "rationale": "AI宽泛探索层相关功能词温和控价：10月4日至10日 pre lit christmas tree 合计28点击、花费$9.85、0单，但预点亮功能与产品吻合且其他活动同词已出单；因此竞价$0.27仅降至$0.25，保留学习与转化入口，不按泛词统一幅度处理，D+7检查回填订单和潜在销量损失。",
+      "status": "planned",
+      "risk_level": "medium",
+      "priority": "P1",
+      "experiment": {
+        "observation_mode": "standard",
+        "observation_windows": [
+          "E+48h",
+          "D+3",
+          "D+7"
+        ],
+        "success_signal": "CPC和无订单花费回落，同时保留与预点亮功能相关的点击，D+7转化或效率改善。",
+        "failure_signal": "成本效率不改善且相关流量减少，或归因回填表明原竞价具有转化价值；复核回撤。",
+        "supersede_rule": "新综合决策或预算、placement、listing、价格变更覆盖本观察，不自动追加降价。",
+        "confounders_to_watch": [
+          "归因回填",
+          "未来订单损失",
+          "不同活动同词意图差异",
+          "旺季需求与价格变化"
+        ],
+        "next_decision_trigger": "E+48h与D+3看CPC及交付，D+7判断继续控价或回撤。",
+        "event_sequence": 1
+      },
+      "evidence_refs": [
+        "snapshot_baseline/keywords.jsonl",
+        "snapshot_baseline/metrics_window.json",
+        "products/B0HHDR4K26/targets/current_period.json"
+      ],
+      "classification_refs": [],
+      "diagnosis_refs": [
+        "disposition_ledger.json#disp_084"
+      ],
+      "handoff_item_refs": [],
+      "tags": [
+        "profit_priority",
+        "full_window_reconciled",
+        "relevance_sensitive_sizing"
+      ]
+    }
+  ],
+  "decision_gate_attempts": [
+    {
+      "attempt": 1,
+      "start": "2026-10-10T03:37:41.875Z",
+      "end": "2026-10-10T03:37:44.085Z",
+      "elapsed_ms": 2210,
+      "passed": false,
+      "failed_checks": [
+        "candidate_promotion_review",
+        "obligation_closure"
+      ]
+    },
+    {
+      "attempt": 2,
+      "start": "2026-10-10T03:42:43.960Z",
+      "end": "2026-10-10T03:42:46.918Z",
+      "elapsed_ms": 2958,
+      "passed": false,
+      "failed_checks": [
+        "review_tiering"
+      ]
+    },
+    {
+      "attempt": 3,
+      "start": "2026-10-10T03:43:40.024Z",
+      "end": "2026-10-10T03:43:42.404Z",
+      "elapsed_ms": 2380,
+      "passed": true,
+      "failed_checks": []
+    }
+  ],
+  "report_gate": {
+    "passed": true,
+    "passed_at": "2026-10-10T03:50:22.522885Z",
+    "evidence": "rollout-2026-10-10T03-44-20-01a123e9-65e5-7f33-9c01-d3f8607a422f.jsonl",
+    "sections": 13
+  },
+  "validation_scope": "Lightweight strict + report checks; --full was not run and no complete-envelope certification is claimed.",
+  "economic_outcome": {
+    "status": "not_measured",
+    "executed": false,
+    "approvals_synced": false,
+    "note": "All six action records were planned. Snapshot performance predates these changes, not their measured outcome."
+  },
+  "unavailable": [
+    "isolated per-phase billable token/cost figures",
+    "post-change advertising outcome"
+  ],
+  "limitations": [
+    "31 campaigns in surface bookkeeping, 11 enabled in snapshot scope; campaign names and manual/auto classification require reconciliation.",
+    "Keyword rows omit date grain; queue individual rows differed from whole-window additive evidence. Agent aggregated frozen rows for sizing.",
+    "Static route verification flags remained unverified despite successful HTTP response caches; bare callable names did not match namespace/aliases.",
+    "Current budget configuration and historical seven-day spend disagree; active configured budget $48 is not verified headroom against operator cap $125.",
+    "Placement modifiers, inventory, full unit costs, competitor and rank context unavailable. Pangolin lacked credentials.",
+    "Scaffold report omitted action and diagnostic display fields; manually repaired. Operating-lane metadata still contains scaffold-origin wording.",
+    "296 per-ID review results, 290 candidates and 46 diagnostic plan items are different counting domains; diagnostics are not additional executable A*.",
+    "No actual backend approval sync. Standalone sync helper recognizes history layout, not this ads/bundles layout."
+  ],
+  "source_refs": {
+    "phase_a": "system/.runtime/phase_a/diag-2026-10-10-08738c/phase_a_summary.json",
+    "scaffold": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/.runtime/phase_b_scaffold_done.json",
+    "logs": {
+      "root": "/home/dylan/.codex/sessions/2026/10/10/rollout-2026-10-10T03-19-44-01a123d2-ddc0-75b0-9b1e-e53049eb60df.jsonl",
+      "decision": "/home/dylan/.codex/sessions/2026/10/10/rollout-2026-10-10T03-27-43-01a123da-2db8-7791-9fbe-c1b633dadd67.jsonl",
+      "report": "/home/dylan/.codex/sessions/2026/10/10/rollout-2026-10-10T03-44-20-01a123e9-65e5-7f33-9c01-d3f8607a422f.jsonl"
+    }
+  },
+  "skill_hashes": [
+    {
+      "path": "AGENTS.md",
+      "sha256": "3ace951c8d52abe03a98ab253f21ee35c09805b5b19e7a1970f0157bbcecea27"
+    },
+    {
+      "path": "shared/agents/ads-goal-evaluator-prompt.md",
+      "sha256": "3a267ca9310dd36de4541ffba642ebf4705701313e74f0379678b1dbd598706a"
+    },
+    {
+      "path": "shared/agents/ads-strategy-expert-prompt.md",
+      "sha256": "56a0590c69d51abc4ba2ccb99a32f73d69efc397ae10413e8917702fa035fa1c"
+    },
+    {
+      "path": "shared/agents/pipeline-context-prompt.md",
+      "sha256": "b1fe6294a735db896e8e29fb0583c9e45a694e01ad4447077be80cb181d0b86a"
+    },
+    {
+      "path": "shared/agents/pipeline-decision-prompt.md",
+      "sha256": "94d6dddc7d9f0de7fb6fcef5ed61e4648559f8e3fd231dd2a73fa31b80fc177d"
+    },
+    {
+      "path": "shared/agents/pipeline-report-prompt.md",
+      "sha256": "c0964f9a81d7ab3a7179f14a9255383c41ee7f625eb9e975f8ef13e4a1da0fa4"
+    },
+    {
+      "path": "shared/agents/pipeline-snapshot-prompt.md",
+      "sha256": "4cba3074e760ba0beba2ff477c4bf0d08a367f011d1fcbb3f13eab9232bacfdc"
+    },
+    {
+      "path": "shared/contracts/artifact-ownership-matrix.md",
+      "sha256": "230b6694a9f21596aac7a5119321f77f1cdde4b24700288199fcaafef2844499"
+    },
+    {
+      "path": "shared/contracts/material-disposition-gate.md",
+      "sha256": "6c7f0fd0ee1de30d95eb39f3b5ccc7183e7e8f6c4d8f48f777e79025dae9dc46"
+    },
+    {
+      "path": "shared/contracts/material-disposition-gate.zh.md",
+      "sha256": "fe4614578f4f4d787f0a39d1752edf45b7264ec31fd490b65d94b15f2e5da53b"
+    },
+    {
+      "path": "shared/contracts/phase-a-invocation-spec.md",
+      "sha256": "82e72be6c1ffe7c475d359d643fb072e69cbedf7991398c73a91dadb1123590c"
+    },
+    {
+      "path": "shared/contracts/runtime-dispatch.md",
+      "sha256": "85b5bbf54b3ddfa87dbe862db25cb626e6b0f5599927e0d5d59a397fb64434f9"
+    },
+    {
+      "path": "shared/contracts/template-and-validator-contract.md",
+      "sha256": "713aa5aae6eda5b97b7acfd8bfbb951263d0844694b13a2292c87c32240db225"
+    },
+    {
+      "path": "shared/scripts/materialize_report_context.py",
+      "sha256": "fdf50189a0167127849d15e84393e71290dfbc9f19b54351f3febff43de99fc0"
+    },
+    {
+      "path": "shared/scripts/phase_b_mechanical_summary.py",
+      "sha256": "0c12a30c49ddb4f747d9260202a30552f60ba20e9a71dc8e09bc188f256b09f3"
+    },
+    {
+      "path": "shared/scripts/resolve_mcp_route.py",
+      "sha256": "e81bbcc63ac387b9f02e740ea93e9924bb726508e13a2db905e1b169e9a66cc5"
+    },
+    {
+      "path": "shared/scripts/run_phase_a.py",
+      "sha256": "d38838e7f5a6b23fde2f585e9952ce3b9a9c6ae039eaeb7bc79cb45abcd10bab"
+    },
+    {
+      "path": "shared/scripts/run_phase_b_mechanical.py",
+      "sha256": "72b7f78cd788d7641de10a2277773bcbddb774bc46875f7338b4b5e72e62280d"
+    },
+    {
+      "path": "shared/scripts/scaffold_candidate_promotion_review.py",
+      "sha256": "02c5555a87fd99b2aa539528b7c65343a13ee0a2821e833882d4cb4f9926b4db"
+    },
+    {
+      "path": "shared/scripts/sync_action_approvals.py",
+      "sha256": "8343210410d4f5b4c2d5f8b7e7a8955d339ec645b15038099429ad99c990f892"
+    },
+    {
+      "path": "shared/scripts/validate_candidate_promotion_review.py",
+      "sha256": "6d7b06946e654258e4b17c42da860c1340e3142621aec65a73c730a23370b5f4"
+    },
+    {
+      "path": "shared/scripts/validate_current_decision_bundle.py",
+      "sha256": "0b2af126807292e4a13f540f5c0f1f28371850fafa7aa8657fc705ebd893f681"
+    },
+    {
+      "path": "shared/scripts/validate_obligation_closure.py",
+      "sha256": "e49bbb8e8efe86690055b0c8c1e1dc988f6f4be97c6cb58514e4e668c6fa4575"
+    },
+    {
+      "path": "shared/scripts/validate_review_tiering.py",
+      "sha256": "fdc29ca0644292e2633665d60fd1bd23c3b0fd0a182de297a2f8e03247a472c8"
+    },
+    {
+      "path": "skills/ads-tuner/EXECUTION_COMPLETENESS_REVIEW_2026-06-10.md",
+      "sha256": "35c16028dcb347831d0dd44ef94cc0a4f15328fec3c1e435f7198f296369c323"
+    },
+    {
+      "path": "skills/ads-tuner/LUCKEE_OVERLAY.md",
+      "sha256": "8699e70a8aa29cfad56e0014b29a043ad6d7d683f5aaf7891d5c580190b71477"
+    },
+    {
+      "path": "skills/ads-tuner/SKILL.md",
+      "sha256": "b6c5325e252bc73232e38b6327a1b1aad29e1232bd838efad915f0c1fcb50dea"
+    },
+    {
+      "path": "skills/ads-tuner/references/account-roles.md",
+      "sha256": "5eee299b2a27ddf9d48f500502596813044cbb153325bc1c6e33f66119176ba1"
+    },
+    {
+      "path": "skills/ads-tuner/references/action-portfolio.md",
+      "sha256": "feab7e50b88ebb7e108d0990d3a2196c631df3f82223b94f5c020346952b3759"
+    },
+    {
+      "path": "skills/ads-tuner/references/anomaly-eligibility.md",
+      "sha256": "517399bce0bd1b0faf7bcb8fa162fe7c9a915fd0ce3088479ea89af9f4c42754"
+    },
+    {
+      "path": "skills/ads-tuner/references/anomaly-playbooks.md",
+      "sha256": "940b3ff58ec76cc9be5f33e57792d3e5a47463eac709f507f96838fb105b6465"
+    },
+    {
+      "path": "skills/ads-tuner/references/bid-budget-placement-rules.md",
+      "sha256": "a56f1a0e67b5c5458ee579a82ab32ba99fc5c2feff7931ec746de903a350e678"
+    },
+    {
+      "path": "skills/ads-tuner/references/business-operating-principles.md",
+      "sha256": "8cda30c9ce38362ca23dadac8ffe9d4cda2255cd31db04d48dfb566027659148"
+    },
+    {
+      "path": "skills/ads-tuner/references/evidence-planner.md",
+      "sha256": "75000fbccd9c330c1bb255f5a6e7bfb2ad0b32bfa2fa564d907838e969a2d467"
+    },
+    {
+      "path": "skills/ads-tuner/references/experiment-controller.md",
+      "sha256": "eeada5a8d4f50c313537e7796c4c16d082983f9d2d445dc76b2a61dee2c66018"
+    },
+    {
+      "path": "skills/ads-tuner/references/four-layer-operator-review.md",
+      "sha256": "a261f7242dcd956f51b8ceba8892c75a1d1686a778d61c8cc29163fa0ac2cb3f"
+    },
+    {
+      "path": "skills/ads-tuner/references/frontend-contract-export.md",
+      "sha256": "3ed921b143bd95b6501ab7ca2ec1c991f67e81e4d7a3216cde3d0de6dfb77721"
+    },
+    {
+      "path": "skills/ads-tuner/references/lifecycle-classifier.md",
+      "sha256": "483dda5a61ddcee405296e3240bf4c3c119919742a06b06d7757cfd08d153ac7"
+    },
+    {
+      "path": "skills/ads-tuner/references/lifecycle-states.md",
+      "sha256": "b35cabb7b296e75979871501d6978b92d9d3be4b818bf7e5de2d6dd60ec41e75"
+    },
+    {
+      "path": "skills/ads-tuner/references/operator-input-handling.md",
+      "sha256": "d48524b5f6626169921ea9b4e24bef8d5efdf5bf39e9e68285b1b84e52e7c854"
+    },
+    {
+      "path": "skills/ads-tuner/references/output-rendering.md",
+      "sha256": "536169bbf639935fb17eb2dae106775d666d4aaea190b21ad2830d72c280d8fb"
+    },
+    {
+      "path": "skills/ads-tuner/references/phase-b-execution-contract.md",
+      "sha256": "06440179c2246248e84a23757dfce8b5484b74f36bb13f860aea63e3f403c4e0"
+    },
+    {
+      "path": "skills/ads-tuner/references/policy-engine.md",
+      "sha256": "99efa773a779b6537dedd9434018e89caaa9d111945b9816858f591ea9a96ce3"
+    },
+    {
+      "path": "skills/ads-tuner/references/role-classifier.md",
+      "sha256": "8eedd2fa254e2a3b4960d48266bf15a934056d6b2b6660e3fe1fc97f1cc82651"
+    },
+    {
+      "path": "skills/ads-tuner/references/sample-sufficiency.md",
+      "sha256": "8d577fd6b110cfa412e7ced1a4681ce0e6bf7f6f1c26bfaf416d03859a32bbea"
+    },
+    {
+      "path": "skills/ads-tuner/references/snapshot-protocol.md",
+      "sha256": "fdefe897cde301cc495acb4d8c40a5d60f22e0813cc7dc74c5ea210674a4f504"
+    },
+    {
+      "path": "skills/ads-tuner/references/state-machine.md",
+      "sha256": "a9980dd11994ebd2730b1b6321ddf167d1b12eb59b24f76d7b382dc4a95b43bf"
+    },
+    {
+      "path": "skills/pipeline-orchestrator/SKILL.md",
+      "sha256": "f831fdf1c68d7b3caacb7f450fc89387fd1cc016ac1f28e18594c0941cc4015b"
+    }
+  ],
+  "artifact_hashes": [
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/.runtime/candidate_promotion_review.json",
+      "sha256": "d3c3795f500e26213f9efc04e94d3f6224f72770f8d23fb61555b37061df2333"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/action_family_ledger.json",
+      "sha256": "8a31187037eaab2c5024b8fa2597759d3acbfc2b296623517c34dda42fbc7259"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A1.json",
+      "sha256": "19e04d222389e44e5919581cf520e9fa3ae59a08e2c3b8760fc453aa4e14715f"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A2.json",
+      "sha256": "149241577a02c1c3acb062808e8f1906ae1d870cbcdb24df4f90d25e8c76685c"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A3.json",
+      "sha256": "f292472e0f5f32f8742f6141505856fa580bd60424e71f1efd08b24bc761cefc"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A4.json",
+      "sha256": "ffdc40e82ee26bdbf6f7d0546402504e2ead8acf2f3a78aa5c9f21be6b71c44b"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A5.json",
+      "sha256": "e04311d709a991da386d3174fdaddc5e8484fe4fe02f55e9332e12bc40deb1ef"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/actions/A6.json",
+      "sha256": "cd86db8e09de013cdc154a42f00ce2e125952c5cc2798594699b7caf05415786"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/campaign_surface_ledger.json",
+      "sha256": "5ddb6345f55abbc33ea94c3e6b87116eff8a9ccbb386135f4a1cf45922c1f620"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/action_history.json",
+      "sha256": "44e70cd5b9b55a8b23c6fe70f98f29e6042c3460e21d61e5021f7a602e7dd3f9"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/business_financial.json",
+      "sha256": "bef86419e65a692a2ef8f001b8fab33a73ac02d74466fc985450724f66eb25ae"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/context_meta.json",
+      "sha256": "7c5e4e4420bcfdf6d9bd5431550665812cc6759b230341064d2ba07eb148e470"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/inventory_logistics.json",
+      "sha256": "171c9992e604105de2882a755ab1e047098ef7becf74175a7468360e7990d9c7"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/keyword_market_context.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/listing_organic.json",
+      "sha256": "30f64a22fc286f9c1f5a68239bd72093a868f6060a9b1cab47a69fd66e3716a3"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/market_competitor.jsonl",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/offer_events_summary.json",
+      "sha256": "cc7d122cb5d82a35ade7aba6eb8daa541272f0cd039b3f8e59ee3fbebe9d34cc"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/context_snapshot/sales_summary.json",
+      "sha256": "c39fa029b668cde3106db8dcc2ff05fca9c351550413ded4a19f4df190b34549"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/decision.json",
+      "sha256": "387aecb3c291a2c1b61a44a650e3bb74d42f11fb117fe72f2cbabdfe003d2d8b"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/disposition_ledger.json",
+      "sha256": "790c7737fa9698f8ebae8d53fe31154a218c3a4e9c1b242958d87081744016c0"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/observation_plan.json",
+      "sha256": "83da77a13ab0b012f52dde8c77a8d3b52a41b8b827433f2b27fa07c303bd94f0"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/report.md",
+      "sha256": "64c820613689c51946a73271528c7ac894780dc7e6f6054c8c5ae7229fe0d665"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/required_inventory_manifest.json",
+      "sha256": "61dd8fed8028bfd9c3e23b54a4922d9045c82f9f85f8156ffd56f365a52a051b"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/keywords.jsonl",
+      "sha256": "1ce477c1aff0a56991b7d4690d4009d374cea14a2eb393f952fb7c6553f0609a"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/metrics_window.json",
+      "sha256": "ab60b1565578007420b2222f29ec931f38d776c4e4f0c2bdb8745fb6d863ce63"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/placements.jsonl",
+      "sha256": "342de07c7478e932abcb3366ecc079f4d2e5850dcc4316d48f57ece4d7958a2b"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/price_state.json",
+      "sha256": "2f95ce6c72785930991f4316e1a285070c6de5c95e2027726171d4c6898f826e"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/search_terms.jsonl",
+      "sha256": "7e5bdaf21e115ac6d572a6883630233dbf050698c5c1799fff83cebc9cde2c9a"
+    },
+    {
+      "path": "products/B0HHDR4K26/ads/bundles/b-261010-08738c/snapshot_baseline/snapshot_meta.json",
+      "sha256": "0e3144ab489903908aa17e0c637f37d10b89e3c2c5a0284dcf6d0952e9936337"
+    },
+    {
+      "path": "products/B0HHDR4K26/targets/current_period.json",
+      "sha256": "ec6f6f633fd8eb001560a4e1861cd4884ee080aee8f8a85651b1b393ca6cbf30"
+    },
+    {
+      "path": "system/.runtime/phase_a/diag-2026-10-10-08738c/phase_a_summary.json",
+      "sha256": "d1fe2bde332df8bc626452a0a7ee5ca61d922f1b4ca840ec57e6207e398b03ce"
+    }
+  ],
+  "fingerprint_timing": "Captured after the completed run, before optimization; tracked implementation was unchanged.",
+  "comparability": {
+    "replay": "Use identical frozen A/A2 facts and target hash for decision-quality comparison, in a new isolated bundle.",
+    "cold_run": "Measure a separate fresh pipeline run for end-to-end speed; disclose window/data changes and cold/warm cache.",
+    "safety": "Do not execute ads, supply expected baseline actions to the evaluator, or overwrite original artifacts."
+  },
+  "typesafe_sources": [
+    {
+      "label": "Jev 与 coding agents 的边界",
+      "url": "https://docs.typesafe.ai/introduction/coding-agents"
+    },
+    {
+      "label": "官方 TypeSafe agent skill",
+      "url": "https://docs.typesafe.ai/agent-skill"
+    },
+    {
+      "label": "多问题批量调用",
+      "url": "https://docs.typesafe.ai/patterns/fan-out"
+    },
+    {
+      "label": "Jev 1.13 的数字与生成限制",
+      "url": "https://docs.typesafe.ai/model-jaggedness/jev-1.13"
+    }
+  ]
+}</script>
+<script>
+  "use strict";
+  const b = JSON.parse(document.getElementById("baseline-data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const escape = (value) => String(value ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" })[c]);
+  const duration = (ms) => { const s=Math.round(ms/1000); return s<60 ? `${s}秒` : `${Math.floor(s/60)}分${String(s%60).padStart(2,"0")}秒`; };
+  const time = (value) => new Date(value).toLocaleTimeString("zh-CN",{timeZone:b.timezone,hour12:false});
+  const categories = { setup:["准备 / 收尾","var(--neutral)"], data:["采集","var(--green)"], handoff:["交接","var(--purple)"], decision:["决策与记录","var(--cyan)"], repair:["校验返工","var(--red)"], report:["报告","var(--ink)"] };
+  const list = (id, entries) => $(id).innerHTML=entries.map((entry)=>`<li>${escape(entry)}</li>`).join("");
+  $("elapsed").textContent=duration(b.elapsed_ms);
+  $("capture").textContent=`${(b.actual_phase_a_ms/1000).toFixed(1)}秒`;
+  $("capture-share").textContent=`占全流程 ${(b.actual_phase_a_ms/b.elapsed_ms*100).toFixed(2)}%`;
+  $("attempts").textContent=`${b.decision_gate_attempts.length} 次`;
+  $("local-time").textContent=`${time(b.run_start)} - ${time(b.run_end)} 北京时间`;
+  $("period").textContent=`${b.diag_id} | 数据窗 ${b.source_window.start} 至 ${b.source_window.end}`;
+  list("facts",[
+    "产品：GarveeHome 3 ft 预点亮桌面圣诞树；US；已捕获价格 $49.99。",
+    `目标：利润优先；ACoS ${b.targets.target_acos_pct}% / TACoS ${b.targets.target_tacos_pct}% / 日预算上限 $${b.targets.daily_budget_cap_usd}。`,
+    `广告窗：${b.source_window.start} 至 ${b.source_window.end}；$${b.metrics.spend} 花费 / $${b.metrics.sales} 销售 / ${b.metrics.orders} 单 / ACoS ${b.metrics.acos}%。`,
+    `快照：${b.capture_counts.enabled_campaigns} enabled Campaign；${b.capture_counts.keywords_returned_total} keyword/target 行；${b.capture_counts.search_terms_returned_total} 搜索词行；${b.capture_counts.placements_returned_total} Placement 行。`,
+  ]);
+  list("deliverables",[
+    `顶层姿态：${b.posture.type}；对象 ${b.coverage.covered} / execute ${b.coverage.execute} / candidate ${b.coverage.candidate} / hold ${b.coverage.hold}。`,
+    `Surface：${b.surface.campaign_count} Campaign 账本 / ${b.surface.surface_count} surfaces；action-family ${b.family.covered_pairs}/${b.family.required_pairs} pairs。`,
+    `观察计划：C ${b.plan_counts.candidates} / D ${b.plan_counts.diagnostics} / O ${b.plan_counts.watch} / B ${b.plan_counts.budget_notes}。这不是额外 ${b.plan_counts.diagnostics} 条可执行动作。`,
+    "A/A2 完整性通过；lightweight strict 第三次通过；report 13 headers + require-report strict 通过。",
+    "未跑 --full；尚无独立全量业务质量评分、隔离后的 billable tokens / 费用或动作后效果。",
+  ]);
+  const catEntries=Object.entries(b.stage_category_ms);
+  $("allocation").innerHTML=catEntries.map(([key,ms])=>`<span style="width:${ms/b.elapsed_ms*100}%;background:${categories[key][1]}" title="${escape(categories[key][0])}: ${duration(ms)}"></span>`).join("");
+  $("legend").innerHTML=catEntries.map(([key,ms])=>`<span><i class="swatch" style="background:${categories[key][1]}"></i>${escape(categories[key][0])} ${duration(ms)} · ${(ms/b.elapsed_ms*100).toFixed(1)}%</span>`).join("");
+  const maximum=Math.max(...b.stages.map((stage)=>stage.duration_ms));
+  $("stages").innerHTML=b.stages.map((stage)=>`<div class="stage"><div class="stage-name">${stage.index}. ${escape(stage.label)}</div><div class="track"><div class="mark" style="width:${stage.duration_ms/maximum*100}%;background:${categories[stage.category][1]}"></div></div><div class="stage-time">${duration(stage.duration_ms)}</div><details><summary>${time(stage.start)} - ${time(stage.end)} · 记录详情</summary><p>${escape(stage.detail)}</p></details></div>`).join("");
+  $("write-cost").textContent=`六次动作写入工具的执行时间合计 ${b.actual_action_tool_seconds.toFixed(2)} 秒。动作段的约 1 分 42 秒包含模型生成、逐条提交和工具往返，不能通过删掉 write_validated_json 获得同等提速。`;
+  $("actions").innerHTML=b.actions.map((a)=>`<tr><td>${escape(a.action_id)}</td><td class="campaign">${escape(a.object.campaign_name)}<br><strong>${escape(a.object.name)}</strong></td><td>${escape(a.object.match_type)}</td><td class="number">$${a.before_value.bid.toFixed(2)} → $${a.after_value.bid.toFixed(2)}</td><td>${escape(a.risk_level)}<br>${escape(a.status)}</td></tr>`).join("");
+  $("rationales").innerHTML=b.actions.map((a)=>`<h3>${escape(a.action_id)} · ${escape(a.object.name)}</h3><p>${escape(a.rationale)}</p><p class="muted">${escape(a.experiment.observation_windows.join(" / "))}；成功：${escape(a.experiment.success_signal)}；失败：${escape(a.experiment.failure_signal)}</p>`).join("");
+  const fixes=["165 条模板说明与 7 个未闭合 low-delivery 对象；补写处置和恢复候选。","恢复的 7 个候选未同步到 review_queue；刷新机械摘要。","lightweight gate 通过；不把其他未执行的检查标为 PASS。"];
+  $("gates").innerHTML=b.decision_gate_attempts.map((g,i)=>`<tr><td>${g.attempt}</td><td>${time(g.start)}</td><td class="number">${(g.elapsed_ms/1000).toFixed(2)}秒</td><td class="${g.passed?"status":"warning"}">${g.passed?"PASS":"FAIL"}<br>${escape(g.failed_checks.join(", "))}</td><td>${escape(fixes[i])}</td></tr>`).join("");
+  list("limitations",b.limitations);
+  $("typesafe-sources").innerHTML=b.typesafe_sources.map((s)=>`<li><a href="${escape(s.url)}" target="_blank" rel="noopener noreferrer">${escape(s.label)}</a></li>`).join("");
+  const comparison=[
+    ["完整冷运行",duration(b.elapsed_ms)],["A/A2 实际执行",`${(b.actual_phase_a_ms/1000).toFixed(1)}秒`],
+    ["B 派发到 gate 通过",duration(Date.parse(b.stages[8].end)-Date.parse(b.stages[5].start))],
+    ["报告 agent 派发到完成",duration(b.stages[10].duration_ms)],["决策 gate / 首次成功",`${b.decision_gate_attempts.length} 次 / 否`],
+    ["对象覆盖 / family 覆盖",`${b.coverage.covered} / ${b.family.covered_pairs} pairs`],
+    ["动作数 / 风险 / 真实 ID",`${b.actions.length} / 全部 medium / action_record gate PASS`],
+    ["独立业务质量 / token / 费用","未测；不以 schema PASS 代替业务正确"],
+    ["动作后广告效果","未执行，未测"],
+  ];
+  $("comparison").innerHTML=comparison.map(([label,value])=>`<tr><td>${escape(label)}</td><td>${escape(value)}</td><td class="muted">尚未运行</td></tr>`).join("");
+  $("version").textContent=`Git HEAD: ${b.git_head}`;
+  $("refs").innerHTML=Object.entries(b.source_refs).map(([label,value])=>`<p>${escape(label)}: ${escape(typeof value==="object"?JSON.stringify(value):value)}</p>`).join("");
+  $("hash-label").textContent=`实现 ${b.skill_hashes.length} 个文件 / 产物 ${b.artifact_hashes.length} 个文件 SHA-256`;
+  $("hashes").innerHTML=[...b.skill_hashes.map((f)=>({...f,type:"implementation"})),...b.artifact_hashes.map((f)=>({...f,type:"artifact"}))].map((f)=>`<tr><td>${escape(f.type)}<br>${escape(f.path)}</td><td>${escape(f.sha256)}</td></tr>`).join("");
+  $("footer").textContent=`记录时间 ${new Date(b.captured_at).toLocaleString("zh-CN",{timeZone:b.timezone,hour12:false})} 北京时间 · ${b.evaluation_id} · 此页不发出任何广告或 Jev API 请求。`;
+  $("print").addEventListener("click",()=>window.print());
+  window.baseline=b;
+</script>
+</body>
+</html>
