@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Luckee 广告 Skill 开发与工作区发布流程</title>
+  <style>
+    :root{--ink:#17212b;--muted:#5e6b78;--line:#dce3e9;--blue:#1769aa;--soft:#eef6fc;--warn:#fff7df;--good:#eaf7ef;--code:#111820}
+    *{box-sizing:border-box} body{margin:0;color:var(--ink);font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",sans-serif;background:#f6f8fa}
+    main{max-width:1100px;margin:0 auto;padding:42px 24px 80px;background:#fff;min-height:100vh}
+    h1{font-size:34px;line-height:1.2;margin:0 0 12px} h2{font-size:24px;margin:42px 0 12px;border-bottom:1px solid var(--line);padding-bottom:8px} h3{font-size:18px;margin:26px 0 8px}
+    p{margin:10px 0} .lead{color:var(--muted);font-size:18px}.meta{color:var(--muted);font-size:14px;margin-bottom:28px}
+    code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:#eef1f4;padding:2px 5px;border-radius:4px}
+    pre{background:var(--code);color:#eaf2f8;padding:16px 18px;border-radius:7px;overflow:auto;line-height:1.5} pre code{background:transparent;padding:0;color:inherit}
+    table{width:100%;border-collapse:collapse;margin:14px 0 22px}th,td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}th{background:#f0f4f7}
+    .box{border-left:4px solid var(--blue);background:var(--soft);padding:12px 16px;margin:16px 0}.warn{border-left-color:#c58a00;background:var(--warn)}.good{border-left-color:#2d8a53;background:var(--good)}
+    ul,ol{padding-left:24px}.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:18px 0}.flow div{border:1px solid var(--line);padding:12px;background:#fbfcfd}.flow b{display:block;color:var(--blue)}
+    .small{font-size:14px;color:var(--muted)} a{color:var(--blue)}
+    @media(max-width:760px){main{padding:28px 16px}.flow{grid-template-columns:1fr 1fr}h1{font-size:28px}}
+  </style>
+</head>
+<body>
+<main>
+  <h1>Luckee 广告 Skill 开发与工作区发布流程</h1>
+  <p class="lead">从修改 Skill，到创建评估 working_dir，再到让新建 Luckee 工作区自动拿到新版本的完整操作手册。</p>
+  <p class="meta">适用仓库：<code>luckee-ads-skills</code>　|　适用日期：2026-10-14　|　覆盖 V2 eval、Luckee 2.0 多 Agent 工作区和内容 CDN</p>
+
+  <div class="flow">
+    <div><b>1. 修改 base</b>编辑 <code>skills/</code>、<code>shared/</code></div>
+    <div><b>2. 生成 Luckee 树</b>更新 mapping/overlay 物化结果</div>
+    <div><b>3. 构建内容包</b>发布 dev/prod immutable bundle</div>
+    <div><b>4. Seed / 热更新</b>新工作区自动应用，旧工作区按需更新</div>
+  </div>
+
+  <h2>一、先区分两条链路</h2>
+  <table>
+    <tr><th>场景</th><th>入口</th><th>产物</th><th>用途</th></tr>
+    <tr><td>本地评估 / Codex 试跑</td><td><code>luckee-ads-eval/scripts/seed_workspace.py</code></td><td><code>/tmp/eval-runs/ws-&lt;case&gt;/working_dir</code></td><td>从 case 生成隔离、可重复的测试工作区</td></tr>
+    <tr><td>Luckee 2.0 新工作区</td><td><code>pnpm --filter @luckee/backend seed:amazon-ad-workspace</code></td><td><code>$HOME/.luckee/workspaces/&lt;workspace-id&gt;</code></td><td>创建线上/本地多 Agent 工作区</td></tr>
+    <tr><td>已有 Luckee 工作区更新</td><td>Content Update API / UI / CDN latest</td><td><code>.luckee/skills</code>、Agent skill home、协议文件</td><td>不删除产品运行数据地更新内容</td></tr>
+  </table>
+  <div class="box warn"><b>不要混用：</b>eval seeder 的 <code>working_dir</code> 不是 Luckee 线上 workspace。前者直接拷贝仓库内容；后者通过 vendored submodule、<code>mapping.json</code>、skill materializer 和内容 CDN 生成。</div>
+
+  <h2>二、如何 seed 一个 eval working_dir</h2>
+  <h3>1. 准备 case</h3>
+  <pre><code>cd /path/to/luckee-ads-skills
+python3 luckee-ads-eval/scripts/seed_workspace.py --list</code></pre>
+  <p>case 至少应包含 <code>case_manifest.json</code> 和 <code>input/</code>。只把产品配置、目标、MCP route、task 等放进 <code>input/</code>；<code>judge_only/</code> 永远不能进入 agent 工作区。</p>
+
+  <h3>2. V2 fresh seed</h3>
+  <pre><code>CASE_ID=b0gtk8mp5y-workspace-config-v2-001
+OUT=/tmp/eval-runs
+WORKER=/home/dylan/apps/core-agent-loop-worker/ts_luckee
+
+python3 luckee-ads-eval/scripts/seed_workspace.py "$CASE_ID" \
+  --harness v2 \
+  --phase-a-mode fresh \
+  --out "$OUT" \
+  --trust \
+  --force \
+  --validated-json-worker-root "$WORKER"</code></pre>
+  <p>结果目录是 <code>$OUT/ws-$CASE_ID/</code>，Codex 应从其中的 <code>working_dir</code> 启动：</p>
+  <pre><code>cd "$OUT/ws-$CASE_ID/working_dir"
+codex exec --sandbox workspace-write \
+  --dangerously-bypass-hook-trust \
+  "$(cat "$OUT/ws-$CASE_ID/.luckee-eval/prompt.md")"</code></pre>
+  <ul>
+    <li><code>--fresh</code> / <code>--phase-a-mode fresh</code>：不复制旧快照，要求 agent 重新完成 Phase A/A2。</li>
+    <li><code>--force</code>：覆盖 disposable seed 目录；覆盖前应先备份。</li>
+    <li><code>--trust</code>：把项目写入 Codex trusted projects，否则项目级 MCP 配置可能被忽略。</li>
+  </ul>
+
+  <h3>3. 验收 seed</h3>
+  <pre><code>python3 - &lt;&lt;'PY'
+import json
+from pathlib import Path
+root = Path(".")
+meta_path = next(root.glob("products/*/product_meta.json"))
+print("product:", json.loads(meta_path.read_text()).get("primary_asin"))
+manifest = json.loads(Path("../.luckee-eval/manifest.json").read_text())
+print("phase_a_mode:", manifest["phase_a_mode"])
+print("validated_json_mcp_configured:", manifest["validated_json_mcp_configured"])
+PY
+
+codex mcp list
+find products -type f \( -name snapshot_meta.json -o -name decision.json \)</code></pre>
+  <div class="box good"><b>fresh 验收：</b><code>phase_a_mode=fresh</code>，初始没有 snapshot/decision；先由 agent 跑 pipeline，再生成这些产物。</div>
+
+  <h2>三、如何保证 Luckee MCP 进入 working_dir</h2>
+  <h3>1. 三类 MCP 来源</h3>
+  <table>
+    <tr><th>类型</th><th>例子</th><th>配置位置</th><th>作用</th></tr>
+    <tr><td>产品数据 MCP</td><td><code>xingshang_&lt;scope&gt;</code>、<code>lingxing_&lt;scope&gt;</code></td><td>case 的 <code>input/system_state/mcp-data-routing.json</code>，seed 时合并到 <code>.codex/config.toml</code> / <code>.mcp.json</code></td><td>广告指标、关键词、搜索词、placement、listing 等</td></tr>
+    <tr><td>本地写入 MCP</td><td><code>write-validated-json</code></td><td><code>.codex/config.toml</code>、<code>.mcp.json</code>、<code>.codex/tools/</code></td><td>Schema 校验后写入受保护 JSON</td></tr>
+    <tr><td>Luckee 运行时 MCP</td><td><code>luckee_orchestrator</code>、Approvals</td><td>Luckee backend/worker 注入，不由 eval case 伪造</td><td>委托 Agent、审批同步、平台编排</td></tr>
+  </table>
+
+  <h3>2. validated JSON 的实际接入</h3>
+  <p>eval seeder 不复制整个 worker，而是把桥接器复制到工作区，并用本机 worker 的 <code>tsx</code> 启动：</p>
+  <pre><code>Codex
+  └─ STDIO MCP: write-validated-json
+      └─ validated_json_stdio_bridge.mts
+          └─ worker/src/mcp/write-validated-json-sdk-server.ts
+              └─ Schema validation + JSON write</code></pre>
+  <p>桥接器会校验 <code>output_path</code>、<code>schema_path</code>、<code>payload_path</code> 必须在当前 <code>WORKING_DIR</code> 内，且拒绝软链接逃逸。当前支持：</p>
+  <pre><code>{
+  "output_path": "products/P/targets/current_period.json",
+  "payload_path": "input/target.json",
+  "schema_path": "shared/schemas/workspace_operational_goal.schema.json"
+}</code></pre>
+  <p><code>payload</code> 与 <code>payload_path</code> 必须二选一；<code>schema</code> 与 <code>schema_path</code> 也必须二选一。</p>
+
+  <h3>3. 已有 working_dir 补接 MCP</h3>
+  <pre><code>python3 luckee-ads-eval/scripts/attach_validated_json_mcp.py \
+  /tmp/eval-runs/ws-$CASE_ID/working_dir \
+  --validated-json-worker-root /home/dylan/apps/core-agent-loop-worker/ts_luckee</code></pre>
+  <p>补接后必须重启 Codex task。检查：</p>
+  <pre><code>grep -A6 'write-validated-json' .codex/config.toml
+cat .codex/tools/validated-json-provenance.json
+tsx .codex/tools/validated_json_stdio_bridge.mts \
+  /home/dylan/apps/core-agent-loop-worker/ts_luckee . --check</code></pre>
+  <div class="box warn"><b>不要只看文件：</b>配置存在不代表当前会话已加载。Codex App 要从该 <code>working_dir</code> 新建 task；旧 task 不会热加载新的 skill/MCP。</div>
+
+  <h2>四、修改 Skill 的正确分层</h2>
+  <table>
+    <tr><th>改动</th><th>应修改位置</th><th>是否生成 Luckee 树</th></tr>
+    <tr><td>Codex 与 Luckee 共用行为</td><td><code>skills/&lt;slug&gt;</code> 或 <code>shared/</code></td><td>若只影响 symlink/base，通常自动跟随；若要发布 Luckee，仍需构建内容包</td></tr>
+    <tr><td>Luckee 多 Agent 特有委托规则</td><td><code>luckee2.0/&lt;agent&gt;/&lt;skill&gt;/LUCKEE_OVERLAY.md</code></td><td>必须运行 <code>apply-luckee-overrides.mjs</code></td></tr>
+    <tr><td>带开发机路径/内部 URL 的 sanitized skill</td><td>修改 base 或生成器的 sanitize rules</td><td>必须重新生成物化树</td></tr>
+    <tr><td>Luckee 专属 skill</td><td><code>luckee2.0/</code> 中真实文件</td><td>按映射登记并重新生成</td></tr>
+  </table>
+  <pre><code>node luckee2.0/tools/apply-luckee-overrides.mjs
+git diff -- luckee2.0/
+git add luckee2.0/</code></pre>
+  <p><code>mapping.json</code> 决定 Agent → skill 的绑定、override、sanitized 和 variants。不要手工改生成后的 Luckee 物化拷贝。</p>
+
+  <h2>五、让新 Skill 在新 Luckee 工作区生效</h2>
+  <h3>路径 A：直接重新 seed（本地 / 开发机）</h3>
+  <pre><code>cd ~/apps/luckee2.0
+git submodule update --init apps/backend/vendor/luckee-ads-skills
+
+pnpm --filter @luckee/backend seed:amazon-ad-workspace -- \
+  --workspace-id amazon-ad-B0GTK8MP5Y \
+  --source-path /absolute/path/to/luckee-ads-skills</code></pre>
+  <p>seed 脚本从 pinned 的 <code>vendor/luckee-ads-skills</code> 读取 <code>luckee2.0/mapping.json</code>，物化 skill 到 <code>.luckee/skills/</code>，再按 Agent binding 复制到 <code>agents/&lt;agentId&gt;/.claude/skills/</code>；Codex runtime 还会复制到 <code>.codex/skills/</code>。</p>
+  <p>如果只想刷新 Skill、协议和 hooks 而保留产品数据，加 <code>--skip-products</code>。如果需要重建 custom Agent persona，加 <code>--reset</code>。</p>
+
+  <h3>路径 B：发布内容包，让新工作区自动应用</h3>
+  <p>Luckee 2.0 的 provision 流程在配置 <code>LUCKEE_CONTENT_CDN_BASE_URL</code> 时，会在新工作区成功前应用 channel latest。内容包是不可变的；任何修改都必须创建新版本。</p>
+  <pre><code>cd ~/apps/luckee2.0
+pnpm --filter @luckee/backend content-bundle:build -- \
+  --out dist/content-bundles/dev-abc123-20261014T120000Z \
+  --version dev-abc123-20261014T120000Z \
+  --channel dev \
+  --source-commit &lt;skills-commit&gt; \
+  --release-tag v2026.10.14 \
+  --deps shared/rules/action-observation-separation.md</code></pre>
+  <p>构建器默认读取 <code>apps/backend/vendor/luckee-ads-skills</code>；本地验证或临时发布可用 <code>--fixture /absolute/path/to/luckee-ads-skills</code>。依赖必须是 skills 根目录下的相对 <code>shared/</code> 路径。</p>
+  <p>发布后原子更新：</p>
+  <pre><code>channels/dev/latest.json
+{
+  "contentVersion": "dev-abc123-20261014T120000Z",
+  "path": "bundles/dev-abc123-20261014T120000Z/content-bundle-dev-abc123-20261014T120000Z.tar.gz",
+  "sha256": "&lt;manifest.json 中的 sha256&gt;"
+}</code></pre>
+  <p>新工作区会在 provision 时应用最新包；已有工作区需要在 UI 的内容更新入口或 Content Update API 中执行 check/apply。</p>
+
+  <h2>六、Skill 内容包必须包含什么</h2>
+  <ul>
+    <li><code>working_dir_skills/</code>：工作区归档的 <code>skills/</code> 内容。</li>
+    <li><code>luckee_skills/</code>：Luckee API / Agent skill home 使用的 skill 内容。</li>
+    <li><code>bindings.json</code>：Agent slug 到 skill slug 的绑定。</li>
+    <li><code>agents_md/</code>、<code>files/</code>：协议文件和显式 shared 依赖。</li>
+    <li><code>manifest.json</code>、<code>mcp_routing/</code>：版本、校验、路由 profile。</li>
+  </ul>
+  <div class="box warn"><b>关键点：</b>只改 <code>skills/ads-tuner</code> 但不更新 <code>bindings.json</code> 或依赖文件，可能导致 Skill 文件已发布但没有绑定到对应 Agent，或者新 Skill 引用了工作区中不存在的 helper。</div>
+
+  <h2>七、发布前验收清单</h2>
+  <ol>
+    <li>Skill base、overlay、sanitized 规则改在正确层；没有手改生成物。</li>
+    <li>运行 <code>node luckee2.0/tools/apply-luckee-overrides.mjs</code>，检查 <code>luckee2.0/</code>。</li>
+    <li>执行对应单元测试、Skill contract audit 和 <code>git diff --check</code>。</li>
+    <li>eval fresh seed 一个工作区，确认新 Skill 与所有依赖脚本存在。</li>
+    <li>确认 <code>.codex/config.toml</code> / <code>.mcp.json</code> 包含产品 MCP 和 <code>write-validated-json</code>。</li>
+    <li>对 <code>write_validated_json</code> 做 <code>--check</code>，另测 inline <code>payload</code> 和 <code>payload_path</code>。</li>
+    <li>构建内容包，核对 manifest checksum、source commit、release tag。</li>
+    <li>先发 <code>dev</code>，创建新 Luckee 工作区做 smoke test，再晋升 <code>prod</code>。</li>
+    <li>检查新工作区的 <code>.luckee/skills</code>、Agent skill home、<code>AGENTS.md</code>、<code>.mcp.json</code> 和 installed content version。</li>
+    <li>确认新建聊天线程从正确工作区启动；旧 task 不会自动加载新 skill。</li>
+  </ol>
+
+  <h2>八、常见故障定位</h2>
+  <table>
+    <tr><th>现象</th><th>优先检查</th></tr>
+    <tr><td>Skill 不出现</td><td>是否从 seeded <code>working_dir</code> 新建 task；<code>mapping.json</code> 是否绑定该 Agent；Luckee Agent home 是否有 skill。</td></tr>
+    <tr><td>MCP 配置存在但工具列表没有</td><td>Codex project trust、当前 task 是否旧会话、MCP command/cwd 是否指向实际 working_dir。</td></tr>
+    <tr><td><code>write_validated_json</code> 写入失败</td><td>worker root、<code>tsx</code>、schema、<code>payload_path</code> 是否在工作区内；不要用 raw Write 绕过。</td></tr>
+    <tr><td>新建 Luckee 工作区仍是旧 Skill</td><td>vendor submodule 是否更新；内容 CDN latest 是否指向新版本；provision 是否应用成功；检查 installedVersion/lastError。</td></tr>
+    <tr><td>Skill 文件更新但 Agent 不生效</td><td><code>bindings.json</code> 是否包含 Agent slug；content update 只增不减，必要时发布新 contentVersion 并重新 apply。</td></tr>
+    <tr><td>改了 base 但 Luckee 没变化</td><td>是否重新生成 overlay/物化树，是否重新构建并发布 immutable bundle；不要覆盖旧 bundle。</td></tr>
+  </table>
+
+  <h2>九、推荐的最小发布命令集</h2>
+  <pre><code># 1) 本地检查
+git status --short --branch
+node luckee2.0/tools/apply-luckee-overrides.mjs
+python3 shared/scripts/audit_ads_tuner_contract.py --strict
+git diff --check
+
+# 2) eval smoke seed
+python3 luckee-ads-eval/scripts/seed_workspace.py &lt;case-id&gt; \
+  --harness v2 --fresh --trust --force \
+  --validated-json-worker-root /home/dylan/apps/core-agent-loop-worker/ts_luckee
+
+# 3) Luckee 本地新工作区
+cd ~/apps/luckee2.0
+git submodule update --init apps/backend/vendor/luckee-ads-skills
+pnpm --filter @luckee/backend seed:amazon-ad-workspace -- \
+  --workspace-id amazon-ad-&lt;ASIN&gt; \
+  --source-path /absolute/path/to/luckee-ads-skills</code></pre>
+
+  <p class="small">本手册对应的实现依据：<code>luckee-ads-eval/scripts/seed_workspace.py</code>、<code>validated_json_mcp.py</code>、<code>validated_json_stdio_bridge.mts</code>，以及 <code>~/apps/luckee2.0/apps/backend/scripts/seed-amazon-ad-workspace.ts</code>、<code>build-workspace-content-bundle.mjs</code>、<code>workspace-content-update/</code>。</p>
+</main>
+</body>
+</html>
